@@ -1,0 +1,7 @@
+for every char
+    if char.is_numeric() {
+        if first == 0 {
+            first = char
+        }
+        last = char
+    }
