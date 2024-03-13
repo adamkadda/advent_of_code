@@ -63,6 +63,10 @@ impl Bag {
 
         true
     }
+
+    fn power(&self) -> u32 {
+        self.red * self.green * self.blue
+    }
 }
 
 fn extract(line: &str) -> u32 {
@@ -94,9 +98,11 @@ fn extract(line: &str) -> u32 {
         }
     }
 
-    match bag.check() {
+    bag.power()
+
+    /* match bag.check() {
         true => return game_num,
         false => return 0,
-    }
+    } */
 
 }
