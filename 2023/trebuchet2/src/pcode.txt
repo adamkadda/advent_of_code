@@ -1,0 +1,33 @@
+store path
+open file
+prepare reader
+iterate through lines
+
+
+
+one
+two
+three
+four
+five
+six
+seven
+eight
+nine
+ten
+
+eight
+
+five
+four
+
+nine
+
+one
+
+seven
+six
+
+ten
+three
+two
