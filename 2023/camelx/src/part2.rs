@@ -4,8 +4,9 @@ use std::{cmp::Ordering, collections::{HashMap, VecDeque}};
 pub struct Hand {
     cards: Vec<char>,
     pub bid: u32,
-    pub strength: u32,
+    strength: u32,
     pub kind: Option<HandKind>,
+    jokers: usize,
 }
 
 impl Hand {
@@ -14,16 +15,16 @@ impl Hand {
             ('A', 12),
             ('K', 11),
             ('Q', 10),
-            ('J', 9),
-            ('T', 8),
-            ('9', 7),
-            ('8', 6),
-            ('7', 5),
-            ('6', 4),
-            ('5', 3),
-            ('4', 2),
-            ('3', 1),
-            ('2', 0),
+            ('T', 9),
+            ('9', 8),
+            ('8', 7),
+            ('7', 6),
+            ('6', 5),
+            ('5', 4),
+            ('4', 3),
+            ('3', 2),
+            ('2', 1),
+            ('J', 0),
         ]);
 
         let mut strength: u32 = 0;
@@ -37,37 +38,74 @@ impl Hand {
 
         let kind = None;
 
-        Self { cards, bid, strength, kind }
+        let mut jokers: usize = 0;
+        let j = 'J';
+        for card in &cards {
+            if card == &j { jokers += 1 }
+        }
+
+        Self { cards, bid, strength, kind, jokers }
 
     }
 
-    fn kind(&mut self) {
+    pub fn kind(&mut self) {
         let mut map: HashMap<char, usize> = HashMap::new();
         for ch in &self.cards {
             map.entry(*ch).and_modify(|counter| *counter += 1).or_insert(1);
         }
         let mut unique_chars: Vec<usize> = map.into_values().collect();
         unique_chars.sort_unstable();
-        
-        match unique_chars.len() {
-            1 => self.kind = Some(HandKind::FiveKind), //     [5]
+
+        // find real kind
+        // new_kind = real_kind += jokers
+
+        self.kind = match unique_chars.len() {
+            1 => Some(HandKind::FiveKind),
             2 => {
                 if unique_chars[0] == 1 {
-                    self.kind = Some(HandKind::FourKind); //  [1, 4]
+                    match self.jokers {
+                        0 => Some(HandKind::FourKind),
+                        1 | 4 => Some(HandKind::FiveKind),
+                        _ => panic!("Four-kind -> invalid jokers: {}", self.jokers),
+                    }
                 } else {
-                    self.kind = Some(HandKind::FullHouse); // [2, 3]
+                    match self.jokers {
+                        0 => Some(HandKind::FullHouse),
+                        2 | 3 => Some(HandKind::FiveKind),
+                        _ => panic!("Full-house -> invalid jokers: {}", self.jokers),
+                    }
                 }
             }
             3 => {
                 if unique_chars[1] == 1 {
-                    self.kind = Some(HandKind::ThreeKind); // [1, 1, 3]
+                    match self.jokers {
+                        0 => Some(HandKind::ThreeKind),
+                        1 | 3 => Some(HandKind::FourKind),
+                        _ => panic!("Three-kind -> invalid jokers: {}", self.jokers),
+                    }
                 } else {
-                    self.kind = Some(HandKind::TwoPair); //   [1, 2, 2]
+                    match self.jokers {
+                        0 => Some(HandKind::TwoPair),
+                        1 => Some(HandKind::FullHouse),
+                        2 => Some(HandKind::FourKind),
+                        _ => panic!("Two-pair -> invalid jokers: {}", self.jokers),
+                    }
                 }
             }
-            4 => self.kind = Some(HandKind::OnePair), //      [1, 1, 1, 2]
-            _ => self.kind = Some(HandKind::HighCard), //     [1, 1, 1, 1, 1]
-        }
+            4 => match self.jokers {
+                0 => Some(HandKind::OnePair),
+                1 | 2 => Some(HandKind::ThreeKind),
+                _ => panic!("One-pair -> invalid jokers: {}", self.jokers),
+            }
+            5 => match self.jokers {
+                0 => Some(HandKind::HighCard),
+                1 => Some(HandKind::OnePair),
+                _ => panic!("High-card -> invalid jokers: {}", self.jokers),
+            },
+            _ => panic!("invalid unique_chars.len(): {}", unique_chars.len()),
+        };
+
+        
     }
 }
 
@@ -130,31 +168,4 @@ pub fn compare(a: &Hand, b: &Hand) -> Ordering {
     }
 
     return a.strength.cmp(&b.strength);
-
-}
-
-use crate::input_utils::load_input;
-
-pub fn solve_part1() {
-    let lines = load_input();
-    let mut hands = get_hands(lines);
-
-    hands.sort_by(|a, b| compare(a, b));
-
-    /* dbg!(&hands[54]);
-    dbg!(&hands[55]); */
-
-    let mut rank: u32 = 1;
-    let mut winnings: u32 = 0;
-
-    for hand in hands {
-        /* println!("{}", winnings);
-        println!("{} * {} = {}", &hand.bid, rank, &hand.bid * rank);
-        println!(""); */
-        winnings += hand.bid * rank;
-        rank += 1;
-    }
-
-    // too large = 252052790
-    println!("{}", winnings);
 }

@@ -1,17 +1,21 @@
+/* mod part1;
+use part1::solve_part1; */
+
 mod input_utils;
 use input_utils::load_input;
 
-mod part1;
-use part1::{get_hands, compare};
+mod part2;
+use part2::{get_hands, compare};
 
 fn main() {
+    // solve_part1();
+    
     let lines = load_input();
     let mut hands = get_hands(lines);
 
     hands.sort_by(|a, b| compare(a, b));
 
-    /* dbg!(&hands[54]);
-    dbg!(&hands[55]); */
+    // dbg!(&hands);
 
     let mut rank: u32 = 1;
     let mut winnings: u32 = 0;
@@ -24,6 +28,6 @@ fn main() {
         rank += 1;
     }
 
-    // too large = 252052790
+    // 252782999, too low
     println!("{}", winnings);
 }

@@ -1,0 +1,47 @@
+[1, 1, 1, 1, 1]
+[1, 1, 1, 2]
+[1, 2, 2]
+[1, 1, 3]
+[2, 3]
+[1, 4]
+[5]
+
+[1, 1, 1, 1, 1]: {
+    [a, b, c, d, e] (0) -> high card
+    [a, b, c, d, J] (1) -> one pair
+}
+
+[1, 1, 1, 2]: {
+    [a, b, c, d, d] (0) -> one pair
+    [a, b, J, d, d] (1) -> three kind
+    [a, b, c, J, J] (2) -> three kind
+}
+
+[1, 2, 2]: {
+    [a, b, b, c, c] (0) -> two pair
+    [J, b, b, c, c] (1) -> full house
+    [a, J, J, c, c] (2) -> four kind
+}
+
+[1, 1, 3]: {
+    [a, b, c, c, c] (0) -> three kind
+    [a, J, c, c, c] (1) -> four kind
+    [a, b, J, J, J] (3) -> three kind
+}
+
+[2, 3]: {
+    [a, a, b, b, b] (0) -> full house
+    [J, J, b, b, b] (2) -> five kind
+    [a, a, J, J, J] (3) -> five kind
+}
+
+[1, 4]: {
+    [a, b, b, b, b] (0) -> four kind
+    [J, b, b, b, b] (1) -> five kind
+    [a, J, J, J, J] (4) -> five kind
+}
+
+[5]: {
+    [a, a, a, a, a] (0) -> five kind
+    [J, J, J, J, J] (5) -> five kind
+}
