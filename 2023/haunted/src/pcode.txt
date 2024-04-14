@@ -1,0 +1,7 @@
+instructions
+    the instructions are to be repeated as necessary
+    we count how many instructions are required to reach "ZZZ"
+map
+    (node, (left_node, right_node))
+
+
