@@ -4,5 +4,5 @@ use input_utils::load_journey;
 
 fn main() {
     let journey = load_journey();
-    println!("{}", journey.travel());
+    journey.escape();
 }

@@ -5,3 +5,31 @@ map
     (node, (left_node, right_node))
 
 
+start
+intermediate nodes
+end
+loop {
+    start..end
+    end
+}
+
+let n = paths.len();
+        let mut steps: usize = 0;
+
+        'outer: loop {
+            for mv in &self.instructions { // execute every instruction . . .
+                for i in 0..n { // . . . for every path
+                    paths[i] = match mv {
+                        Direction::Left => self.network.get(&paths[i]).unwrap().0.clone(),
+                        Direction::Right => self.network.get(&paths[i]).unwrap().1.clone(),
+                    }
+                }
+                steps += 1;
+                dbg!(steps);
+                dbg!(&paths);
+                println!("");
+                if Self::are_we_there_yet(&paths) { break 'outer; }
+            }
+        }
+
+        steps
